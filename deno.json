@@ -1,7 +1,7 @@
 {
   "name": "@spicetify/router",
   "description": "A simple page router for Spicetify Extensions",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "exports": {
     "./Classes/Route": "./Classes/Route.ts",
     "./Classes/Page": "./Classes/Page.ts",
