@@ -10,8 +10,14 @@ import Whentil from "../Tools/Whentil.ts";
 /**
  * This function is used to fix the page view for Peek NPV users.
  */
-const PeekNPV_CSSFix = (htmlId: string) => {
+const CSSFixes = (htmlId: string): string => {
     return `
+        .Root__main-view:has(#${htmlId}) .main-view-container__scroll-node-child,
+        .Root__main-view:has(#${htmlId}) .main-view-container__scroll-node-child-spacer,
+        .Root__main-view:has(#${htmlId}) .main-view-container__scroll-node-child,
+        .Root__main-view:has(#${htmlId}) .main-view-container__scroll-node-child-spacer {
+            display: none !important;
+        }
         .Root__main-view:has(#${htmlId}),
         .Root__main-view:has(#${htmlId}) .KL8t9WB65UfUEPuTFAhO,
         .Root__main-view:has(#${htmlId}) .main-content-view,
@@ -64,7 +70,7 @@ class Page {
             
             {
                 const style = document.createElement("style");
-                style.innerHTML = PeekNPV_CSSFix(this.htmlId);
+                style.innerHTML = CSSFixes(this.htmlId);
                 document.head.appendChild(style);
 
                 this.Maid.Give(() => style.remove());
