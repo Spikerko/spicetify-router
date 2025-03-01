@@ -11,7 +11,7 @@ import Whentil from "../Tools/Whentil.ts";
  * This function is used to fix the page view for Peek NPV users.
  */
 const CSSFixes = (htmlId: string): string => {
-    return `
+  return `
         .Root__main-view:has(#${htmlId}) .main-view-container__scroll-node-child,
         .Root__main-view:has(#${htmlId}) .main-view-container__scroll-node-child-spacer,
         .Root__main-view:has(#${htmlId}) .main-view-container__scroll-node-child,
@@ -26,69 +26,72 @@ const CSSFixes = (htmlId: string): string => {
         .Root__main-view:has(#${htmlId}) .main-view-container .div[data-overlayscrollbars-viewport] {
             height: 100% !important;
         }
-    `
+    `;
 };
-
 
 /**
  * PageOptions - Type
  */
 export interface PageOptions {
-    content: string;
-    htmlId: string;
+  content: string;
+  htmlId: string;
 }
 
 /**
  * The Page class, which is used to create a custom page, with connection of the Route Class.
  */
 class Page {
-    public readonly content: string;
-    public readonly htmlId: string;
-    private readonly MainView: (HTMLElement | null) = Global.MainView;
-    private Maid: (Maid | null);
+  public readonly content: string;
+  public readonly htmlId: string;
+  private Maid: Maid | null;
 
-    public isMounted: boolean = false;
-    public htmlElement: HTMLElement | null = null;
-    
-    constructor({
-        content,
-        htmlId
-    }: PageOptions) {
-        this.content = content;
-        this.htmlId = htmlId;
-        this.Maid = null;
-    }
+  public isMounted: boolean = false;
+  public htmlElement: HTMLElement | null = null;
 
-    public Mount() {
-        this.Maid = new Maid();
-        Whentil.When(() => this.MainView, () => {
-            if (!this.MainView || !this.Maid) return;
-            const elem = document.createElement("div");
-            elem.id = this.htmlId;
-            elem.classList.add("Spicetify-Router--page");
-            elem.innerHTML = this.content;
-            
-            {
-                const style = document.createElement("style");
-                style.innerHTML = CSSFixes(this.htmlId);
-                document.head.appendChild(style);
+  constructor({ content, htmlId }: PageOptions) {
+    this.content = content;
+    this.htmlId = htmlId;
+    this.Maid = null;
 
-                this.Maid.Give(() => style.remove());
-            }
+    // Properly bind methods to preserve 'this' context
+    this.Mount = this.Mount.bind(this);
+    this.Destroy = this.Destroy.bind(this);
+  }
 
-            this.htmlElement = elem;
-            this.MainView.appendChild(elem);
-            this.isMounted = true;
+  public Mount() {
+    this.Maid = new Maid();
+    Whentil.When(
+      () => Global.MainView, // Use Global.MainView directly to get fresh reference
+      (mainView) => {
+        if (!mainView || !this.Maid) return;
+        
+        const elem = document.createElement("div");
+        elem.id = this.htmlId;
+        elem.classList.add("Spicetify-Router--page");
+        elem.innerHTML = this.content;
 
-            this.Maid.Give(() => elem.remove());
-        })
-    }
+        const style = document.createElement("style");
+        style.innerHTML = CSSFixes(this.htmlId);
+        style.classList.add("Spicetify-Router--page-style");
+        document.head.appendChild(style);
 
-    public Destroy() {
-        this.isMounted = false;
-        if (!this.Maid) return;
-        this.Maid.Destroy();
-    }
+        this.Maid.Give(() => style.remove());
+
+        this.htmlElement = elem;
+        mainView.appendChild(elem);
+        this.isMounted = true;
+
+        this.Maid.Give(() => elem.remove());
+      }
+    );
+  }
+
+  public Destroy() {
+    this.isMounted = false;
+    if (!this.Maid) return;
+    this.Maid.Destroy();
+    this.Maid = null;
+  }
 }
 
 export default Page;
