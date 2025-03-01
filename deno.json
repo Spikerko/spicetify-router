@@ -1,0 +1,21 @@
+{
+  "name": "@spicetify/router",
+  "description": "A simple page router for Spicetify Extensions",
+  "version": "1.0.4",
+  "exports": {
+    "./Classes/Route": "./Classes/Route.ts",
+    "./Classes/Page": "./Classes/Page.ts",
+    "./Tools/html": "./Tools/html.ts",
+    "./Tools/Session": "./Tools/Session.ts"
+  },
+  "imports": {
+    "@socali/modules": "jsr:@socali/modules@^4.4.1"
+  },
+  "compilerOptions": {
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable"
+    ]
+  }
+}

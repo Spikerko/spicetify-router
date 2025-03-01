@@ -1,0 +1,16 @@
+{
+  "version": "4",
+  "specifiers": {
+    "jsr:@socali/modules@^4.4.1": "4.4.1"
+  },
+  "jsr": {
+    "@socali/modules@4.4.1": {
+      "integrity": "1a8ae6eb7279ba223413386ab72366512b1ad78503d370643d820b42cac9e966"
+    }
+  },
+  "workspace": {
+    "dependencies": [
+      "jsr:@socali/modules@^4.4.1"
+    ]
+  }
+}
