@@ -26,6 +26,11 @@ const CSSFixes = (htmlId: string): string => {
         .Root__main-view:has(#${htmlId}) .main-view-container .div[data-overlayscrollbars-viewport] {
             height: 100% !important;
         }
+
+        #${htmlId} {
+            width: 100%;
+            height: 100%;
+        }
     `;
 };
 
