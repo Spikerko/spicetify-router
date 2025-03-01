@@ -35,30 +35,35 @@ class Route {
 
         Spicetify.Platform.History.listen(Session.RecordNavigation);
         Session.RecordNavigation(Spicetify.Platform.History.location);
+
+    }
+
+    private onRouterNavigate(data: Location) {
+        if (data.pathname === this.path) {
+            this.isActive = true;
+            if (this.handler instanceof Function) {
+                this.handler({ navigationData: data, isActive: this.isActive });
+            } else if (this.handler instanceof Page) {
+                if (!this.handler.isMounted) {
+                    this.handler.Mount();
+                }
+            }
+        } else {
+            this.isActive = false;
+            if (this.handler instanceof Page) {
+                if (this.handler.isMounted) {
+                    this.handler.Destroy();
+                }
+            }
+        }
     }
 
 
     public Mount() {
         this.isMounted = true;
-        const routeNavigateListener = Event.listen("router:navigate", (data: Location) => {
-            if (data.pathname === this.path) {
-                this.isActive = true;
-                if (this.handler instanceof Function) {
-                    this.handler({ navigationData: data, isActive: this.isActive });
-                } else if (this.handler instanceof Page) {
-                    if (!this.handler.isMounted) {
-                        this.handler.Mount();
-                    }
-                }
-            } else {
-                this.isActive = false;
-                if (this.handler instanceof Page) {
-                    if (this.handler.isMounted) {
-                        this.handler.Destroy();
-                    }
-                }
-            }
-        });
+        const routeNavigateListener = Event.listen("router:navigate", this.onRouterNavigate);
+
+        this.onRouterNavigate(Spicetify.Platform.History.location);
 
         // Store a reference to the handler if it's a Page
         if (this.handler instanceof Page) {
