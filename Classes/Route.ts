@@ -52,9 +52,7 @@ class Route {
                 }
             } else {
                 this.isActive = false;
-                if (this.handler instanceof Function) {
-                    this.handler({ navigationData: data, isActive: this.isActive });
-                } else if (this.handler instanceof Page) {
+                if (this.handler instanceof Page) {
                     if (this.handler.isMounted) {
                         this.handler.Destroy();
                     }
