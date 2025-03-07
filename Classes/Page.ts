@@ -48,6 +48,12 @@ export interface PageOptions {
   onMountFinish?: Function;
   // deno-lint-ignore ban-types
   onDestroy?: Function;
+  // deno-lint-ignore ban-types
+  onBeforeUnmount?: Function;
+  // deno-lint-ignore ban-types
+  onUnmount?: Function;
+  // deno-lint-ignore ban-types
+  onUnmountFinish?: Function;
 }
 
 /**
@@ -68,8 +74,14 @@ class Page {
   public readonly onMountFinish: Function;
   // deno-lint-ignore ban-types
   public readonly onDestroy: Function;
+  // deno-lint-ignore ban-types
+  public readonly onBeforeUnmount: Function;
+  // deno-lint-ignore ban-types
+  public readonly onUnmount: Function;
+  // deno-lint-ignore ban-types
+  public readonly onUnmountFinish: Function;
 
-  constructor({ content, htmlId, onMount, onBeforeMount, onMountFinish, onDestroy }: PageOptions) {
+  constructor({ content, htmlId, onMount, onBeforeMount, onMountFinish, onDestroy, onBeforeUnmount, onUnmount, onUnmountFinish }: PageOptions) {
     this.content = content;
     this.htmlId = htmlId;
     this.Maid = null;
@@ -77,6 +89,9 @@ class Page {
     this.onBeforeMount = onBeforeMount ?? (() => {});
     this.onMountFinish = onMountFinish ?? (() => {});
     this.onDestroy = onDestroy ?? (() => {});
+    this.onBeforeUnmount = onBeforeUnmount ?? (() => {});
+    this.onUnmount = onUnmount ?? (() => {});
+    this.onUnmountFinish = onUnmountFinish ?? (() => {});
 
     // Properly bind methods to preserve 'this' context
     this.Mount = this.Mount.bind(this);
@@ -115,10 +130,13 @@ class Page {
   }
 
   public Destroy() {
+    this.onBeforeUnmount();
     this.isMounted = false;
     if (!this.Maid) return;
     this.Maid.Destroy();
+    this.onUnmount();
     this.Maid = null;
+    this.onUnmountFinish();
     this.onDestroy();
   }
 }
