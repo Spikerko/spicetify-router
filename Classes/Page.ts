@@ -40,6 +40,14 @@ const CSSFixes = (htmlId: string): string => {
 export interface PageOptions {
   content: string;
   htmlId: string;
+  // deno-lint-ignore ban-types
+  onMount?: Function;
+  // deno-lint-ignore ban-types
+  onBeforeMount?: Function;
+  // deno-lint-ignore ban-types
+  onMountFinish?: Function;
+  // deno-lint-ignore ban-types
+  onDestroy?: Function;
 }
 
 /**
@@ -52,11 +60,23 @@ class Page {
 
   public isMounted: boolean = false;
   public htmlElement: HTMLElement | null = null;
+  // deno-lint-ignore ban-types
+  public readonly onMount: Function;
+  // deno-lint-ignore ban-types
+  public readonly onBeforeMount: Function;
+  // deno-lint-ignore ban-types
+  public readonly onMountFinish: Function;
+  // deno-lint-ignore ban-types
+  public readonly onDestroy: Function;
 
-  constructor({ content, htmlId }: PageOptions) {
+  constructor({ content, htmlId, onMount, onBeforeMount, onMountFinish, onDestroy }: PageOptions) {
     this.content = content;
     this.htmlId = htmlId;
     this.Maid = null;
+    this.onMount = onMount ?? (() => {});
+    this.onBeforeMount = onBeforeMount ?? (() => {});
+    this.onMountFinish = onMountFinish ?? (() => {});
+    this.onDestroy = onDestroy ?? (() => {});
 
     // Properly bind methods to preserve 'this' context
     this.Mount = this.Mount.bind(this);
@@ -64,6 +84,7 @@ class Page {
   }
 
   public Mount() {
+    this.onBeforeMount();
     this.Maid = new Maid();
     Whentil.When(
       () => Global.MainView, // Use Global.MainView directly to get fresh reference
@@ -85,8 +106,10 @@ class Page {
         this.htmlElement = elem;
         mainView.appendChild(elem);
         this.isMounted = true;
+        this.onMount();
 
         this.Maid.Give(() => elem.remove());
+        this.onMountFinish();
       }
     );
   }
@@ -96,6 +119,7 @@ class Page {
     if (!this.Maid) return;
     this.Maid.Destroy();
     this.Maid = null;
+    this.onDestroy();
   }
 }
 
