@@ -29,6 +29,18 @@ const MyRoute = new Route({
     path: "/",
     handler: (data) => {
         console.log(data.navigationData, data.isActive);
+    },
+    onBeforeMount: () => {
+        console.log("Route Before Mounted!");
+    },
+    onMount: () => {
+        console.log("Route Mounted!");
+    },
+    onMountFinish: () => {
+        console.log("Route Finish Mounted!");
+    },
+    onDestroy: () => {
+        console.log("Route Destroyed!");
     }
 });
 
@@ -51,8 +63,41 @@ const MyRoute = new Route({
         content: html`
             <h1>Hello World</h1>
         `,
-        htmlId: "MyPage"
-    })
+        htmlId: "MyPage",
+        onBeforeMount: () => {
+            console.log("Page Before Mounted!");
+        },
+        onMount: () => {
+            console.log("Page Mounted!");
+        },
+        onMountFinish: () => {
+            console.log("Page Finish Mounted!");
+        },
+        onBeforeUnmount: () => {
+            console.log("Page Before Unmounted!");
+        },
+        onUnmount: () => {
+            console.log("Page Unmounted!");
+        },
+        onUnmountFinish: () => {
+            console.log("Page Finish Unmounted!");
+        },
+        onDestroy: () => {
+            console.log("Page Destroyed!");
+        }
+    }),
+    onBeforeMount: () => {
+        console.log("Route Before Mounted!");
+    },
+    onMount: () => {
+        console.log("Route Mounted!");
+    },
+    onMountFinish: () => {
+        console.log("Route Finish Mounted!");
+    },
+    onDestroy: () => {
+        console.log("Route Destroyed!");
+    }
 });
 
 // Route
